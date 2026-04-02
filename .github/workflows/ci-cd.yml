@@ -61,7 +61,13 @@ jobs:
         run: docker run -d -p 3000:3000 my-app:${{ github.sha }}
 
       - name: Wait for app
-        run: sleep 5
+        run: |
+          for i in {1..10}; do
+            curl -f http://localhost:3000/health && break
+            echo "Waiting for app..."
+            sleep 3
+          done
+        
 
       - name: Run smoke test
         run: ./scripts/smoke-test.sh
